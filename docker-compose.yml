@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   influxdb:
     # Full tag list: https://hub.docker.com/r/library/influxdb/tags/
@@ -42,7 +42,7 @@ services:
       - influxdb
 
   kapacitor:
-  # Full tag list: https://hub.docker.com/r/library/kapacitor/tags/
+    # Full tag list: https://hub.docker.com/r/library/kapacitor/tags/
     build:
       context: ./images/kapacitor/
       dockerfile: ./${TYPE}/Dockerfile
@@ -91,3 +91,21 @@ services:
       context: ./documentation
     ports:
       - "3010:3000"
+  postgres:
+    image: postgres:9.6
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+  alchemist:
+    image: registry.gitlab.com/gold-alchemist/alchemist:latest
+    restart: always
+    ports:
+      - ${PORT}:${PORT}
+    env_file:
+      - .alchemist-env
+    depends_on:
+      - postgres
